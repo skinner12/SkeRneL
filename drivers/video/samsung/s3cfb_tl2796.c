@@ -278,7 +278,9 @@ static void setup_gamma_regs(struct s5p_lcd *lcd, u16 gamma_regs[])
 		// terrible shameful hack allowing to get back standard
 		// colors without fixing the real thing properly (gamma table)
 		// it consist on a simple (negative) offset applied on v0
-		gamma_regs[c] = (adj > (gamma_offset[c]* 7/2) && (adj <=255)) ? (adj - (gamma_offset[c]*7/2)) | 0x100 : adj | 0x100;
+		//gamma_regs[c] = (adj > (gamma_offset[c]* 7/2) && (adj <=255)) ? (adj - (gamma_offset[c]*7/2)) | 0x100 : adj | 0x100;
+		
+		gamma_regs[c] = min(max(adj + ( gamma_offset[c] * 3.5 ), 0), 255) | 0x100 ;
 
 		// calculate brightness value for color c
 		v255 = vx[5] = gamma_lookup(lcd, brightness, bv->v255, c);
