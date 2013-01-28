@@ -77,7 +77,7 @@ struct s5p_lcd *lcd_;
 u32 original_color_adj_mults[3];
 unsigned int panel_config_sequence = 0;
 
-int hacky_v1_offset[3] = {-14, -17, -18};
+int hacky_v1_offset[3] = {-26, -30, -33};
 
 static const u16 s6e63m0_SEQ_ETC_SETTING_SAMSUNG[] = {
 	/* ETC Condition Set Command  */
@@ -247,7 +247,7 @@ static u32 gamma_lookup(struct s5p_lcd *lcd, u8 brightness, u32 val, int c)
 static void setup_gamma_regs(struct s5p_lcd *lcd, u16 gamma_regs[])
 {
 	int c, i;
-	int gamma_offset[3] = {-6, -6, -6};
+	int gamma_offset[3] = {-23, -20, -17};
 	u8 brightness = lcd->bl;
 	const struct tl2796_gamma_adj_points *bv = lcd->gamma_adj_points;
 
@@ -1136,7 +1136,7 @@ static int __devinit tl2796_probe(struct spi_device *spi)
 	}
 
 	lcd->bl_dev->props.max_brightness = 255;
-	lcd->bl_dev->props.brightness = lcd->bl;
+	lcd->bl_dev->props.brightness = 255;
 
 	tl2796_ldi_enable(lcd);
 #ifdef CONFIG_HAS_EARLYSUSPEND
