@@ -1,8 +1,0 @@
-patching file Documentation/block/row-iosched.txt
-patching file block/Kconfig.iosched
-Hunk #1 succeeded at 11 with fuzz 1 (offset -10 lines).
-Hunk #2 succeeded at 54 (offset -6 lines).
-Hunk #3 succeeded at 73 with fuzz 2 (offset -8 lines).
-patching file block/Makefile
-Hunk #1 succeeded at 11 with fuzz 2 (offset -3 lines).
-patching file block/row-iosched.c
