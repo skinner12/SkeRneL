@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BASE=/home/tux/nexus/
 KERNEL=kernel/SkeRneL
@@ -6,9 +6,19 @@ ZIP=zipKernel
 TOOLCHAIN=toolchain
 DATE=$(date +"%d%m%Y%H%M")
 
-
-
 cd $BASE$KERNEL
+
+function usage ()
+{
+       echo -e "Usage: (order of parameters are important !)"
+       echo -e "        myprog.sh [--compile|--zip] "
+       echo -e "\n--compile (-c) : Compile the kernel."
+       echo -e "\n--zip (-z) : Create a flashable zip file.\n"
+}
+
+function makeKernel ()
+{
+
 git branch
 read -p "Correct branch? [Y/N]: " -n 1
 if [[ ! $REPLY =~ ^[Yy]$ ]]
@@ -34,21 +44,57 @@ make -j4
 echo -e "Checking result...\n"
 ls -l $BASE$KERNEL/arch/arm/boot/zImage
 
+}
+
+
+function makeZip ()
+{
+
 echo -e "Copying Files...\n"
-cp $BASE$KERNEL/arch/arm/boot/zImage $BASE$KERNEL/mkboot/
-cd $BASE$KERNEL/mkboot
-./mkbootimg --kernel zImage --ramdisk cyan2disk_new.cpio.gz --cmdline 'no_console_suspend=1 console=bull's --base 0x30000000 --pagesize 4096 -o boot.img
+cp $BASE$KERNEL/drivers/scsi/scsi_wait_scan.ko $BASE$ZIP/system/modules/
+
 
 echo -e "Creating ZIP...\n"
-cp $BASE$KERNEL/mkboot/boot.img $BASE$ZIP/boot.img
-cp $BASE$KERNEL/mkboot/zImage $BASE$ZIP/kernel/zImage
-cp $BASE$KERNEL/drivers/scsi/scsi_wait_scan.ko $BASE$ZIP/system/modules/
+
 7za a -r -tzip $BASE/SkeRneL-$DATE.zip $BASE$ZIP/*
 
-#make clean
 
-rm $BASE$ZIP/kernel/zImage
-rm $BASE$KERNEL/mkboot/zImage
-rm $BASE$KERNEL/mkboot/boot.img
-rm $BASE$ZIP/boot.img
-rm $BASE$ZIP/system/modules/scsi_wait_scan.ko
+	ls -l $BASE/SkeRneL-$DATE.zip
+
+
+}
+
+
+# Opzioni di scelta
+
+if test "$1" == "" ; then
+	usage;
+else
+	while test "$1" != "" ; do
+		case $1 in
+
+		        --compile|-c)
+				makeKernel;
+
+	 		;;
+		        --zip|-z)
+				makeZip;
+
+		        ;;
+		        --help|-h)
+		                usage;
+		               exit 0
+
+		        ;;
+		        -*)
+		                echo "Error: no such option $1"
+		                usage
+		                exit 1
+		        ;;
+		esac
+		echo -e ""
+		shift
+
+	done
+fi
+exit 0
