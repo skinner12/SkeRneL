@@ -1,8 +1,9 @@
 #!/bin/sh
 
-BASE=/home/tux/apps/nexus/
+BASE=/home/tux/nexus/
 KERNEL=kernel/SkeRneL
 ZIP=zipKernel
+TOOLCHAIN=toolchain
 DATE=$(date +"%d%m%Y%H%M")
 
 
@@ -18,12 +19,14 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]
 
 echo -e "\nSTARTING...\n"
 
-export PATH=$PATH:/home/tux/apps/nexus/toolchain/ZenKernel_ARCH_armv7a_compiler/bin/
-#export PATH=$PATH:/home/tux/apps/nexus/toolchain/arm-2012.09/bin/
+export PATH=$BASE$TOOLCHAIN/gcc-linaro-arm-linux-gnueabihf-4.7-2013.01-20130125_linux/bin:$PATH
+
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=arm-zen-linux-gnueabi-
-#export CROSS COMPILE=arm-none-eabi-
+
+export CROSS COMPILE=arm-linux-gnueabihf-
+
+exec "$@"
 
 #cp arch/arm/configs/crespo_dave_config ./.config
 make -j4
@@ -40,7 +43,7 @@ echo -e "Creating ZIP...\n"
 cp $BASE$KERNEL/mkboot/boot.img $BASE$ZIP/boot.img
 cp $BASE$KERNEL/mkboot/zImage $BASE$ZIP/kernel/zImage
 cp $BASE$KERNEL/drivers/scsi/scsi_wait_scan.ko $BASE$ZIP/system/modules/
-7z a -r -tzip $BASE/SkeRneL-$DATE.zip $BASE$ZIP/*
+7za a -r -tzip $BASE/SkeRneL-$DATE.zip $BASE$ZIP/*
 
 #make clean
 

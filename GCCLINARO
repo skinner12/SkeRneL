@@ -1,0 +1,26 @@
+#!/bin/sh
+# change the paths below and name the script as something like: GCC336
+# copy or save it somwhere in your normal PATH
+# Then, to run make(for example) just run: 'GCC336 make'
+
+
+BASE=/home/tux/nexus/
+KERNEL=kernel/SkeRneL
+ZIP=zipKernel
+TOOLCHAIN=toolchain
+DATE=$(date +"%d%m%Y%H%M")
+
+
+
+echo -e "\nSTARTING...\n"
+
+
+
+export PATH=$BASE$TOOLCHAIN/gcc-linaro-arm-linux-gnueabihf-4.7-2013.01-20130125_linux/bin:$PATH
+
+export ARCH=arm
+export SUBARCH=arm
+
+export CROSS COMPILE=arm-linux-gnueabihf-
+
+exec "$@"
