@@ -11,7 +11,7 @@ cd $BASE$KERNEL
 function usage ()
 {
        echo -e "Usage: (order of parameters are important !)"
-       echo -e "        myprog.sh [--compile|--zip] "
+       echo -e "        compile.sh [--compile|--zip] "
        echo -e "\n--compile (-c) : Compile the kernel."
        echo -e "\n--zip (-z) : Create a flashable zip file.\n"
 }
