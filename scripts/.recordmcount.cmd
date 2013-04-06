@@ -12,7 +12,7 @@ deps_scripts/recordmcount := \
   /usr/include/bits/types.h \
   /usr/include/bits/typesizes.h \
   /usr/include/time.h \
-  /usr/lib/gcc/x86_64-redhat-linux/4.4.6/include/stddef.h \
+  /usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/stddef.h \
   /usr/include/endian.h \
   /usr/include/bits/endian.h \
   /usr/include/bits/byteswap.h \
@@ -38,7 +38,7 @@ deps_scripts/recordmcount := \
   /usr/include/libio.h \
   /usr/include/_G_config.h \
   /usr/include/wchar.h \
-  /usr/lib/gcc/x86_64-redhat-linux/4.4.6/include/stdarg.h \
+  /usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/stdarg.h \
   /usr/include/bits/stdio_lim.h \
   /usr/include/bits/sys_errlist.h \
   /usr/include/bits/stdio.h \
