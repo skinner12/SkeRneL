@@ -28,7 +28,8 @@ function usage ()
        echo -e "        compile.sh [--compile|--zip] "
        echo -e "\n--compile (-c) : Compile the kernel."
               echo -e "\n--clean (-cl) : Clean the kernel."
-       echo -e "\n--zip (-z) : Create a flashable zip file.\n $reset"
+echo -e "\n--config (-conf) : Make config Kernel."       
+echo -e "\n--zip (-z) : Create a flashable zip file.\n $reset"
 }
 
 function makeKernel ()
@@ -115,6 +116,27 @@ make clean
 
 }
 
+function makeConfig ()
+{
+
+echo -e "$warn Cleanin compiled...\n $reset"
+
+export PATH=$BASE$TOOLCHAIN/gcc-linaro-arm-linux-gnueabihf-4.7-2013.01-20130125_linux/bin:$PATH
+
+export ARCH=arm
+export SUBARCH=arm
+
+export CROSS COMPILE=arm-linux-gnueabihf-
+
+exec "$@"
+
+#cp arch/arm/configs/crespo_dave_config ./.config
+
+make config
+
+}
+
+
 # Opzioni di scelta
 
 if test "$1" == "" ; then
@@ -135,7 +157,10 @@ else
 				makeClean;
 
 		        ;;
+                       --config|-conf)
+                                makeConfig;
 
+                        ;;
 		        --help|-h)
 		                usage;
 		               exit 0
