@@ -57,7 +57,7 @@ exec "$@"
 
 
 rm .version
-echo "666" >> .version
+echo "45" >> .version
 make -j4
 
 echo -e "$warn \nChecking result...\n"
