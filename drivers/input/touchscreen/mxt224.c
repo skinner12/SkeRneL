@@ -204,7 +204,7 @@ static int __devinit mxt224_init_touch_driver(struct mxt224_data *data)
 {
 	struct object_t *object_table;
 	u32 read_crc = 0;
-	u32 calc_crc = 0;
+	u32 calc_crc;
 	u16 crc_address;
 	u16 dummy;
 	int i;
@@ -321,7 +321,6 @@ static void report_input_data(struct mxt224_data *data)
 					data->fingers[i].w);
 		input_report_abs(data->input_dev, ABS_MT_TRACKING_ID, i);
 		input_mt_sync(data->input_dev);
-		num_fingers_down++;
 
 #ifdef CONFIG_BLD
 		if (system_rev >= 0x30 && data->fingers[i].y > BLD_TOUCHKEYS_POSITION)
@@ -329,6 +328,8 @@ static void report_input_data(struct mxt224_data *data)
 			touchkey_pressed();
 		    }
 #endif
+
+		num_fingers_down++;
 	}
 	data->finger_mask = 0;
 

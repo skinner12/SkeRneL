@@ -9,8 +9,6 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  */
-#pragma GCC diagnostic ignored "-Warray-bounds"
-
 #include <linux/i2c.h>
 #include <linux/delay.h>
 #include <linux/version.h>
@@ -2418,7 +2416,7 @@ static int s5k4ecgx_s_ext_ctrls(struct v4l2_subdev *sd,
 				struct v4l2_ext_controls *ctrls)
 {
 	struct v4l2_ext_control *ctrl = ctrls->controls;
-	int ret=0;
+	int ret;
 	int i;
 
 	for (i = 0; i < ctrls->count; i++, ctrl++) {

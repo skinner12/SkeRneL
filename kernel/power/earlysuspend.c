@@ -1,8 +1,6 @@
 /* kernel/power/earlysuspend.c
  *
  * Copyright (C) 2005-2008 Google, Inc.
- * Copyright (c) 2010 Samsung Electronics
- * Copyright (c) 2012 Will Tisdale - <willtisdale@gmail.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -14,7 +12,6 @@
  * GNU General Public License for more details.
  *
  */
-
 
 #include <linux/earlysuspend.h>
 #include <linux/module.h>
@@ -82,9 +79,8 @@ static void early_suspend(struct work_struct *work)
 
 	mutex_lock(&early_suspend_lock);
 	spin_lock_irqsave(&state_lock, irqflags);
-	if (state == SUSPEND_REQUESTED) {
+	if (state == SUSPEND_REQUESTED)
 		state |= SUSPENDED;
-	}
 	else
 		abort = 1;
 	spin_unlock_irqrestore(&state_lock, irqflags);
@@ -105,7 +101,6 @@ static void early_suspend(struct work_struct *work)
 			pos->suspend(pos);
 		}
 	}
-
 	mutex_unlock(&early_suspend_lock);
 
 	if (debug_mask & DEBUG_SUSPEND)
@@ -127,9 +122,8 @@ static void late_resume(struct work_struct *work)
 
 	mutex_lock(&early_suspend_lock);
 	spin_lock_irqsave(&state_lock, irqflags);
-	if (state == SUSPENDED) {
+	if (state == SUSPENDED)
 		state &= ~SUSPENDED;
-	}
 	else
 		abort = 1;
 	spin_unlock_irqrestore(&state_lock, irqflags);

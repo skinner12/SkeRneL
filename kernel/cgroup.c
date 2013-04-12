@@ -116,12 +116,6 @@ struct cgroupfs_root {
 
 	/* The name for this hierarchy - may be empty */
 	char name[MAX_CGROUP_ROOT_NAMELEN];
-
-	/*
-	* Used to show coeherent informations in /proc/mounts without
-	* acquiring the cgroup_mutex lock.
-	*/
-	rwlock_t lock;
 };
 
 /*
@@ -372,10 +366,18 @@ static void free_css_set_work(struct work_struct *work)
 		struct cgroup *cgrp = link->cgrp;
 		list_del(&link->cg_link_list);
 		list_del(&link->cgrp_link_list);
+		/*
+		 * We may not be holding cgroup_mutex, and if cgrp->count is
+		 * dropped to 0 the cgroup can be destroyed at any time, hence
+		 * rcu_read_lock is used to keep it alive.
+		 */
+		rcu_read_lock();
 		if (atomic_dec_and_test(&cgrp->count)) {
 			check_for_release(cgrp);
 			cgroup_wakeup_rmdir_waiter(cgrp);
 		}
+		rcu_read_unlock();
+
 		kfree(link);
 	}
 	write_unlock(&css_set_lock);
@@ -1001,9 +1003,7 @@ static int rebind_subsystems(struct cgroupfs_root *root,
 			mutex_lock(&ss->hierarchy_mutex);
 			cgrp->subsys[i] = dummytop->subsys[i];
 			cgrp->subsys[i]->cgroup = cgrp;
-			write_lock(&root->lock);
 			list_move(&ss->sibling, &root->subsys_list);
-			write_unlock(&root->lock);
 			ss->root = root;
 			if (ss->bind)
 				ss->bind(ss, cgrp);
@@ -1020,9 +1020,7 @@ static int rebind_subsystems(struct cgroupfs_root *root,
 			dummytop->subsys[i]->cgroup = dummytop;
 			cgrp->subsys[i] = NULL;
 			subsys[i]->root = &rootnode;
-			write_lock(&root->lock);
 			list_move(&ss->sibling, &rootnode.subsys_list);
-			write_unlock(&root->lock);
 			mutex_unlock(&ss->hierarchy_mutex);
 			/* subsystem is now free - drop reference on module */
 			module_put(ss->module);
@@ -1054,7 +1052,7 @@ static int cgroup_show_options(struct seq_file *seq, struct vfsmount *vfs)
 	struct cgroupfs_root *root = vfs->mnt_sb->s_fs_info;
 	struct cgroup_subsys *ss;
 
-	read_lock(&root->lock);
+	mutex_lock(&cgroup_mutex);
 	for_each_subsys(root, ss)
 		seq_printf(seq, ",%s", ss->name);
 	if (test_bit(ROOT_NOPREFIX, &root->flags))
@@ -1065,7 +1063,7 @@ static int cgroup_show_options(struct seq_file *seq, struct vfsmount *vfs)
 		seq_puts(seq, ",clone_children");
 	if (strlen(root->name))
 		seq_printf(seq, ",name=%s", root->name);
-	read_unlock(&root->lock);
+	mutex_unlock(&cgroup_mutex);
 	return 0;
 }
 
@@ -1303,11 +1301,8 @@ static int cgroup_remount(struct super_block *sb, int *flags, char *data)
 	/* (re)populate subsystem files */
 	cgroup_populate_dir(cgrp);
 
-	if (opts.release_agent) {
-		write_lock(&root->lock);
+	if (opts.release_agent)
 		strcpy(root->release_agent_path, opts.release_agent);
-		write_unlock(&root->lock);
-	}
  out_unlock:
 	kfree(opts.release_agent);
 	kfree(opts.name);
@@ -1340,7 +1335,6 @@ static void init_cgroup_root(struct cgroupfs_root *root)
 	struct cgroup *cgrp = &root->top_cgroup;
 	INIT_LIST_HEAD(&root->subsys_list);
 	INIT_LIST_HEAD(&root->root_list);
-	rwlock_init(&root->lock);
 	root->number_of_cgroups = 1;
 	cgrp->root = root;
 	cgrp->top_cgroup = cgrp;
@@ -2348,9 +2342,7 @@ static int cgroup_release_agent_write(struct cgroup *cgrp, struct cftype *cft,
 		return -EINVAL;
 	if (!cgroup_lock_live_group(cgrp))
 		return -ENODEV;
-	write_lock(&cgrp->root->lock);
 	strcpy(cgrp->root->release_agent_path, buffer);
-	write_unlock(&cgrp->root->lock);
 	cgroup_unlock();
 	return 0;
 }

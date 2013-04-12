@@ -16,7 +16,6 @@
  * TODO: - NAT to a unique tuple, not to TCP source port
  * 	   (needs netfilter tuple reservation)
  */
-#pragma GCC diagnostic ignored "-Waddress"
 
 #include <linux/module.h>
 #include <linux/tcp.h>

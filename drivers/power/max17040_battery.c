@@ -22,10 +22,6 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 
-#ifdef CONFIG_BLX
-#include <linux/blx.h>
-#endif
-
 #define MAX17040_VCELL_MSB	0x02
 #define MAX17040_VCELL_LSB	0x03
 #define MAX17040_SOC_MSB	0x04
@@ -40,7 +36,7 @@
 #define MAX17040_CMD_LSB	0xFF
 
 #define MAX17040_DELAY		1000
-#define MAX17040_BATTERY_FULL	95
+#define MAX17040_BATTERY_FULL	100
 
 struct max17040_chip {
 	struct i2c_client		*client;
@@ -92,7 +88,7 @@ static int max17040_get_property(struct power_supply *psy,
 	return 0;
 }
 
-/*static int max17040_write_reg(struct i2c_client *client, int reg, u8 value)
+static int max17040_write_reg(struct i2c_client *client, int reg, u8 value)
 {
 	int ret;
 
@@ -102,7 +98,7 @@ static int max17040_get_property(struct power_supply *psy,
 		dev_err(&client->dev, "%s: err %d\n", __func__, ret);
 
 	return ret;
-}*/
+}
 
 static int max17040_read_reg(struct i2c_client *client, int reg)
 {
@@ -208,11 +204,7 @@ static void max17040_get_status(struct i2c_client *client)
 		chip->status = POWER_SUPPLY_STATUS_DISCHARGING;
 	}
 
-#ifdef CONFIG_BLX
-	if (chip->soc >= get_charginglimit())
-#else
-	if (chip->soc > MAX17040_BATTERY_FULL)
-#endif
+	if (chip->soc >= MAX17040_BATTERY_FULL)
 		chip->status = POWER_SUPPLY_STATUS_FULL;
 }
 

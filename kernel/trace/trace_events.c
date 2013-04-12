@@ -171,7 +171,6 @@ int ftrace_event_reg(struct ftrace_event_call *call, enum trace_reg type)
 					    call);
 		return 0;
 #endif
-
 	}
 	return 0;
 }

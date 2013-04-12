@@ -8,7 +8,6 @@
  * Based on the 'brute force' H.323 NAT module by
  * Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
  */
-#pragma GCC diagnostic ignored "-Waddress"
 
 #include <linux/module.h>
 #include <linux/tcp.h>

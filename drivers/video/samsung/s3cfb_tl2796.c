@@ -77,7 +77,7 @@ struct s5p_lcd *lcd_;
 u32 original_color_adj_mults[3];
 unsigned int panel_config_sequence = 0;
 
-int hacky_v1_offset[3] = {-26, -30, -33};
+int hacky_v1_offset[3] = {0, 0, 0};
 
 static const u16 s6e63m0_SEQ_ETC_SETTING_SAMSUNG[] = {
 	/* ETC Condition Set Command  */
@@ -247,7 +247,6 @@ static u32 gamma_lookup(struct s5p_lcd *lcd, u8 brightness, u32 val, int c)
 static void setup_gamma_regs(struct s5p_lcd *lcd, u16 gamma_regs[])
 {
 	int c, i;
-	int gamma_offset[3] = {-23, -20, -17};
 	u8 brightness = lcd->bl;
 	const struct tl2796_gamma_adj_points *bv = lcd->gamma_adj_points;
 
@@ -278,8 +277,13 @@ static void setup_gamma_regs(struct s5p_lcd *lcd, u16 gamma_regs[])
 		// terrible shameful hack allowing to get back standard
 		// colors without fixing the real thing properly (gamma table)
 		// it consist on a simple (negative) offset applied on v0
-		gamma_regs[c] = (adj > (gamma_offset[c]* 7/2) && (adj <=255)) ? (adj - (gamma_offset[c]*7/2)) | 0x100 : adj | 0x100;
-		
+
+		if ((c==0) && (hacky_v1_offset[c] < -41)) hacky_v1_offset[c] = -41;
+		if ((c==1) && (hacky_v1_offset[c] < -28)) hacky_v1_offset[c] = -28;
+		if ((c==2) && (hacky_v1_offset[c] < -55)) hacky_v1_offset[c] = -55;
+
+		gamma_regs[c] = (adj + hacky_v1_offset[c]) | 0x100;
+
 		// calculate brightness value for color c
 		v255 = vx[5] = gamma_lookup(lcd, brightness, bv->v255, c);
 		adj = 600 - 120 - DIV_ROUND_CLOSEST(600 * v255, v0);
@@ -486,8 +490,7 @@ const struct backlight_ops s5p_bl_ops = {
 
 void tl2796_early_suspend(struct early_suspend *h)
 {
-	struct s5p_lcd *lcd = container_of(h, struct s5p_lcd,
-								early_suspend);
+	struct s5p_lcd *lcd = container_of(h, struct s5p_lcd, early_suspend);
 
 	tl2796_ldi_disable(lcd);
 
@@ -495,8 +498,7 @@ void tl2796_early_suspend(struct early_suspend *h)
 }
 void tl2796_late_resume(struct early_suspend *h)
 {
-	struct s5p_lcd *lcd = container_of(h, struct s5p_lcd,
-								early_suspend);
+	struct s5p_lcd *lcd = container_of(h, struct s5p_lcd, early_suspend);
 
 	tl2796_ldi_enable(lcd);
 
@@ -1136,7 +1138,7 @@ static int __devinit tl2796_probe(struct spi_device *spi)
 	}
 
 	lcd->bl_dev->props.max_brightness = 255;
-	lcd->bl_dev->props.brightness = 255;
+	lcd->bl_dev->props.brightness = lcd->bl;
 
 	tl2796_ldi_enable(lcd);
 #ifdef CONFIG_HAS_EARLYSUSPEND

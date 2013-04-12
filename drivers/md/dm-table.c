@@ -4,7 +4,6 @@
  *
  * This file is released under the GPL.
  */
-#pragma GCC diagnostic ignored "-Wunused-value"
 
 #include "dm.h"
 
