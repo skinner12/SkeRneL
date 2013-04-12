@@ -59,7 +59,7 @@ exec "$@"
 
 rm .version
 echo "45" >> .version
-make -j4
+make -j6
 
 echo -e "$warn \nChecking result...\n"
 ls -l $BASE$KERNEL/arch/arm/boot/zImage
