@@ -78,7 +78,7 @@ enum s5pv210_dmc_port {
 };
 
 static struct cpufreq_frequency_table s5pv210_freq_table[] = {
-	{L0, 1320*1000},
+	{L0, 1200*1000},
 	{L1, 1096*1000},
 	{L2, 1000*1000},
 	{L3, 800*1000},
@@ -105,7 +105,7 @@ const unsigned long int_volt_max = 1300000;
 
 static struct s5pv210_dvs_conf dvs_conf[] = {
 	[L0] = {
-		.arm_volt   = 1350000,
+		.arm_volt   = 1300000,
 		.int_volt   = 1150000,
 		},
 	[L1] = {
