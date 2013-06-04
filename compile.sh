@@ -45,7 +45,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]
 
 echo -e "$pass \nSTARTING...\n $reset"
 
-export PATH=$BASE$TOOLCHAIN/gcc-linaro-arm-linux-gnueabihf-4.8-2013.05_linux/bin:$PATH
+export PATH=$BASE$TOOLCHAIN/gcc-linaro-arm-linux-gnueabihf-4.7-2013.01-20130125_linux/bin:$PATH
 
 export ARCH=arm
 export SUBARCH=arm
