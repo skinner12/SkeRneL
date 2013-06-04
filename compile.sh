@@ -46,11 +46,13 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]
 echo -e "$pass \nSTARTING...\n $reset"
 
 export PATH=$BASE$TOOLCHAIN/gcc-linaro-arm-linux-gnueabihf-4.7-2013.01-20130125_linux/bin:$PATH
+#export PATH=$BASE$TOOLCHAIN/arm-cortex_a8-linux-gnueabi-linaro_4.7.4-2013.05/bin:$PATH
 
 export ARCH=arm
 export SUBARCH=arm
 
 export CROSS COMPILE=arm-linux-gnueabihf-
+#export CROSS COMPILE=arm-cortex_a8-linux-gnueabi-
 
 exec "$@"
 
