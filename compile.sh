@@ -61,6 +61,7 @@ exec "$@"
 
 rm .version
 echo "45" >> .version
+make skernel_defconfig
 make -j6
 
 echo -e "$warn \nChecking result...\n"
